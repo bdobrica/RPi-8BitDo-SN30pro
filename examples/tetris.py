@@ -79,11 +79,11 @@ def main() -> None:
 
         for prev_piece in prev_pieces:
             clear_piece(canvas, prev_piece)
-        if len(prev_pieces) > 2:
+        if len(prev_pieces) > 1:
             _ = prev_pieces.pop(0)
         print_piece(canvas, piece)
 
-        time.sleep(0.5)
+        time.sleep(0.1)
         prev_pieces.append(piece)
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
