@@ -28,11 +28,13 @@ def generate_piece(x, y) -> list:
 
 
 def print_piece(canvas: FrameCanvas, piece: list) -> None:
+    print(f"print: {piece}")
     for x, y in piece:
         canvas.SetPixel(x, y, 255, 255, 255)
 
 
 def clear_piece(canvas: FrameCanvas, piece: list) -> None:
+    print(f"clear: {piece}")
     for x, y in piece:
         canvas.SetPixel(x, y, 0, 0, 0)
 
@@ -85,6 +87,7 @@ def main() -> None:
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
+        print("")
         # canvas = matrix.SwapOnVSync(canvas)
 
 
