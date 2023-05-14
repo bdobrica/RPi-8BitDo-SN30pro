@@ -78,7 +78,7 @@ class Controller:
                 if value > 0:
                     self.left_stick_callbacks.on_right(value)
                 elif value < 0:
-                    self.left_stick_callbacks.on_left(value)
+                    self.left_stick_callbacks.on_left(abs(value))
                 else:
                     self.left_stick_callbacks.on_left(value)
                     self.left_stick_callbacks.on_right(value)
@@ -86,7 +86,7 @@ class Controller:
                 if value > 0:
                     self.left_stick_callbacks.on_down(value)
                 elif value < 0:
-                    self.left_stick_callbacks.on_up(value)
+                    self.left_stick_callbacks.on_up(abs(value))
                 else:
                     self.left_stick_callbacks.on_up(value)
                     self.left_stick_callbacks.on_down(value)
@@ -94,7 +94,7 @@ class Controller:
                 if value > 0:
                     self.right_stick_callbacks.on_right(value)
                 elif value < 0:
-                    self.right_stick_callbacks.on_left(value)
+                    self.right_stick_callbacks.on_left(abs(value))
                 else:
                     self.right_stick_callbacks.on_left(value)
                     self.right_stick_callbacks.on_right(value)
@@ -102,7 +102,7 @@ class Controller:
                 if value > 0:
                     self.right_stick_callbacks.on_down(value)
                 elif value < 0:
-                    self.right_stick_callbacks.on_up(value)
+                    self.right_stick_callbacks.on_up(abs(value))
                 else:
                     self.right_stick_callbacks.on_up(value)
                     self.right_stick_callbacks.on_down(value)
@@ -110,7 +110,7 @@ class Controller:
                 if value > 0:
                     self.dpad_callbacks.on_right(value)
                 elif value < 0:
-                    self.dpad_callbacks.on_left(value)
+                    self.dpad_callbacks.on_left(abs(value))
                 else:
                     self.dpad_callbacks.on_left(value)
                     self.dpad_callbacks.on_right(value)
@@ -118,7 +118,7 @@ class Controller:
                 if value > 0:
                     self.dpad_callbacks.on_down(value)
                 elif value < 0:
-                    self.dpad_callbacks.on_up(value)
+                    self.dpad_callbacks.on_up(abs(value))
                 else:
                     self.dpad_callbacks.on_up(value)
                     self.dpad_callbacks.on_down(value)
