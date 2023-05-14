@@ -24,6 +24,7 @@ def generate_piece(x, y) -> list:
     for c in range(8):
         if piece & (1 << c):
             result.append((x + c // 4, y + c % 4))
+    return result
 
 
 def print_piece(canvas: FrameCanvas, piece: list) -> None:
