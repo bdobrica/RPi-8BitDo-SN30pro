@@ -69,15 +69,14 @@ def main() -> None:
 
     get_new_piece = True
     prev_piece = None
-    pre_canvas = None
     while True:
         if get_new_piece:
             prev_piece = None
             piece = generate_piece(0, 0)
             get_new_piece = False
 
-        if prev_piece and pre_canvas:
-            clear_piece(pre_canvas, prev_piece)
+        if prev_piece:
+            clear_piece(canvas, prev_piece)
         print_piece(canvas, piece)
 
         time.sleep(0.5)
@@ -85,8 +84,8 @@ def main() -> None:
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             get_new_piece = True
-        pre_canvas = canvas
-        canvas = matrix.SwapOnVSync(pre_canvas)
+        canvas.Clear()
+        canvas = matrix.SwapOnVSync(canvas)
 
 
 if __name__ == "__main__":
