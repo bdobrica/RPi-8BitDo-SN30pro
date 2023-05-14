@@ -83,8 +83,8 @@ def main() -> None:
         prev_piece = [p for p in piece]
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
+            print("Collision!")
             get_new_piece = True
-        canvas.Clear()
         canvas = matrix.SwapOnVSync(canvas)
 
 
