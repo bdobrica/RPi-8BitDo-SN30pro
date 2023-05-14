@@ -48,6 +48,7 @@ def detect_collision(piece: list, board: list = None) -> bool:
 
     if left < 0 or right >= WIDTH or bottom >= HEIGHT:
         return True
+    return False
 
 
 def init_matrix() -> RGBMatrix:
