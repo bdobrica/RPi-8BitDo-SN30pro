@@ -85,7 +85,7 @@ def main() -> None:
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
-        canvas = matrix.SwapOnVSync(canvas)
+        # canvas = matrix.SwapOnVSync(canvas)
 
 
 if __name__ == "__main__":
