@@ -79,7 +79,7 @@ def main() -> None:
         print_piece(canvas, piece)
 
         time.sleep(0.5)
-        prev_piece = piece
+        prev_piece = [p for p in piece]
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             get_new_piece = True
