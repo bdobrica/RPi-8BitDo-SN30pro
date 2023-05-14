@@ -79,7 +79,7 @@ def main() -> None:
 
         for prev_piece in prev_pieces:
             clear_piece(canvas, prev_piece)
-        if prev_piece:
+        if len(prev_pieces) > 2:
             _ = prev_pieces.pop(0)
         print_piece(canvas, piece)
 
