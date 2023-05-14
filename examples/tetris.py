@@ -70,19 +70,21 @@ def main() -> None:
     canvas = matrix.CreateFrameCanvas()
 
     get_new_piece = True
-    prev_piece = None
+    prev_pieces = []
     while True:
         if get_new_piece:
             prev_piece = None
             piece = generate_piece(0, 0)
             get_new_piece = False
 
-        if prev_piece:
+        for prev_piece in prev_pieces:
             clear_piece(canvas, prev_piece)
+        if prev_piece:
+            _ = prev_pieces.pop(0)
         print_piece(canvas, piece)
 
         time.sleep(0.5)
-        prev_piece = [p for p in piece]
+        prev_pieces.append(piece)
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             print("Collision!")
