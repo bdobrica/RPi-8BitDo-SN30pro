@@ -52,7 +52,6 @@ def detect_collision(piece: list, board: list) -> bool:
 
 def init_matrix() -> FrameCanvas:
     options = RGBMatrixOptions()
-    options.hardware_mapping = "adafruit-hat-pwm"
     options.rows = HEIGHT
     options.cols = WIDTH
     options.chain_length = 1
