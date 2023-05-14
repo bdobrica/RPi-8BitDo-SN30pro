@@ -41,7 +41,7 @@ def move_piece(piece: list, dx: int, dy: int) -> list:
     return [(x + dx, y + dy) for x, y in piece]
 
 
-def detect_collision(piece: list, board: list) -> bool:
+def detect_collision(piece: list, board: list = None) -> bool:
     left = min(x for x, y in piece)
     right = max(x for x, y in piece)
     bottom = max(y for x, y in piece)
