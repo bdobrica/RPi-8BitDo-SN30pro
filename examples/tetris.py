@@ -1,7 +1,7 @@
 import random
 import time
 
-from bt_8bitdo_30snpro import Controller
+# from bt_8bitdo_30snpro import Controller
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix.core import FrameCanvas
 
