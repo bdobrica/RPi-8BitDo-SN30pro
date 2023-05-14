@@ -74,6 +74,8 @@ def main() -> None:
             piece = generate_piece(0, 0)
             get_new_piece = False
 
+        # if prev_piece:
+        #    clear_piece(canvas, prev_piece)
         print_piece(canvas, piece)
 
         time.sleep(0.5)
@@ -81,9 +83,6 @@ def main() -> None:
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             get_new_piece = True
-
-        if prev_piece:
-            clear_piece(canvas, prev_piece)
         canvas = matrix.SwapOnVSync(canvas)
 
 
