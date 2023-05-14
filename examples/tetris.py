@@ -50,7 +50,7 @@ def detect_collision(piece: list, board: list) -> bool:
         return True
 
 
-def init_matrix() -> FrameCanvas:
+def init_matrix() -> RGBMatrix:
     options = RGBMatrixOptions()
     options.rows = HEIGHT
     options.cols = WIDTH
@@ -66,14 +66,16 @@ def init_matrix() -> FrameCanvas:
     options.panel_type = ""
     options.gpio_slowdown = 1
     options.disable_hardware_pulsing = False
+    options.drop_privileges = False
 
     matrix = RGBMatrix(options=options)
     matrix.Clear()
-    return matrix.CreateFrameCanvas()
+    return matrix
 
 
 def main() -> None:
-    canvas = init_matrix()
+    matrix = init_matrix()
+    canvas = matrix.CreateFrameCanvas()
 
     get_new_piece = True
     prev_piece = None
@@ -92,6 +94,7 @@ def main() -> None:
         piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             get_new_piece = True
+        canvas = matrix.SwapOnVSync(canvas)
 
 
 if __name__ == "__main__":
