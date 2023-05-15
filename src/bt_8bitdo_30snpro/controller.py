@@ -158,4 +158,6 @@ class Controller:
             while True:
                 _, value, id_0, id_1 = struct.unpack(self.STRUCT_FORMAT, device.read(self.STRUCT_SIZE))
 
+                print("event", value, id_0, id_1)
+
                 self.parse_event(id_0, id_1, value)
