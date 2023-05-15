@@ -71,7 +71,8 @@ def init_matrix() -> RGBMatrix:
 
 
 def display() -> None:
-    global brick_dx
+    global brick_x
+    brick_x = WIDTH // 2 - 1
 
     matrix = init_matrix()
     canvas = matrix.CreateFrameCanvas()
@@ -81,7 +82,7 @@ def display() -> None:
     while True:
         if get_new_piece:
             prev_piece = None
-            piece = generate_piece(WIDTH // 2 - 1, 0)
+            piece = generate_piece(brick_x, 0)
             get_new_piece = False
 
         for prev_piece in prev_pieces:
@@ -92,29 +93,29 @@ def display() -> None:
 
         time.sleep(0.1)
         prev_pieces.append(piece)
-        piece = move_piece(piece, brick_dx, 1)
+        piece = move_piece(piece, 0, 1)
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
+            brick_x = WIDTH // 2 - 1
         print("")
         canvas = matrix.SwapOnVSync(canvas)
 
 
 def main() -> None:
-    global brick_dx
-    brick_dx = 0
+    global brick_x
 
     def left_callback(value: int) -> None:
-        brick_dx = 0
+        global brick_x
         if value == 1:
-            brick_dx -= 1
-        print("left", brick_dx)
+            brick_x -= 1
+        print("left", brick_x)
 
     def right_callback(value: int) -> None:
-        brick_dx = 0
+        global brick_x
         if value == 1:
-            brick_dx += 1
-        print("right", brick_dx)
+            brick_x += 1
+        print("right", brick_x)
 
     def up_callback(value: int) -> None:
         pass
