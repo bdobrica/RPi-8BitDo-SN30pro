@@ -130,10 +130,8 @@ def main() -> None:
             on_down=down_callback,
         )
     )
-    Thread(target=display).start()
     Thread(target=controller.listen).start()
-    while True:
-        time.sleep(1)
+    display()
 
 
 if __name__ == "__main__":
