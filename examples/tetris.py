@@ -101,6 +101,7 @@ def display() -> None:
 
 
 def main() -> None:
+    global brick_dx
     brick_dx = 0
 
     def left_callback(value: int) -> None:
