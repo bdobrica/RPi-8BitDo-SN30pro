@@ -1,7 +1,7 @@
 import random
 import sys
+import threading
 import time
-from threading import Thread
 
 sys.path.append("../src")
 
@@ -97,7 +97,9 @@ def display() -> None:
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
-            brick_x = WIDTH // 2 - 1
+            lock = threading.Lock()
+            with lock:
+                brick_x = WIDTH // 2 - 1
         print("")
         canvas = matrix.SwapOnVSync(canvas)
 
@@ -108,13 +110,17 @@ def main() -> None:
     def left_callback(value: int) -> None:
         global brick_x
         if value == 1:
-            brick_x -= 1
+            lock = threading.Lock()
+            with lock:
+                brick_x -= 1
         print("left", brick_x)
 
     def right_callback(value: int) -> None:
         global brick_x
         if value == 1:
-            brick_x += 1
+            lock = threading.Lock()
+            with lock:
+                brick_x += 1
         print("right", brick_x)
 
     def up_callback(value: int) -> None:
@@ -131,7 +137,7 @@ def main() -> None:
             on_down=down_callback,
         )
     )
-    Thread(target=controller.listen).start()
+    threading.Thread(target=controller.listen).start()
     display()
 
 
