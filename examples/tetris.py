@@ -22,6 +22,8 @@ PIECES = [
     0b11100100,  # T
 ]
 
+brick_dx = 0
+
 
 def generate_piece(x, y) -> list:
     piece = random.choice(PIECES)
@@ -71,8 +73,7 @@ def init_matrix() -> RGBMatrix:
 
 
 def display() -> None:
-    global brick_x
-    brick_x = WIDTH // 2 - 1
+    global brick_dx
 
     matrix = init_matrix()
     canvas = matrix.CreateFrameCanvas()
@@ -82,7 +83,7 @@ def display() -> None:
     while True:
         if get_new_piece:
             prev_piece = None
-            piece = generate_piece(brick_x, 0)
+            piece = generate_piece(WIDTH // 2 - 1, 0)
             get_new_piece = False
 
         for prev_piece in prev_pieces:
@@ -93,35 +94,35 @@ def display() -> None:
 
         time.sleep(0.1)
         prev_pieces.append(piece)
-        piece = move_piece(piece, 0, 1)
+        piece = move_piece(piece, brick_dx, 1)
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
             lock = threading.Lock()
             with lock:
-                brick_x = WIDTH // 2 - 1
+                brick_dx = 0
         print("")
         canvas = matrix.SwapOnVSync(canvas)
 
 
 def main() -> None:
-    global brick_x
+    global brick_dx
 
     def left_callback(value: int) -> None:
-        global brick_x
+        global brick_dx
         if value == 1:
             lock = threading.Lock()
             with lock:
-                brick_x -= 1
-        print("left", brick_x)
+                brick_dx -= 1
+        print("left", brick_dx)
 
     def right_callback(value: int) -> None:
-        global brick_x
+        global brick_dx
         if value == 1:
             lock = threading.Lock()
             with lock:
-                brick_x += 1
-        print("right", brick_x)
+                brick_dx += 1
+        print("right", brick_dx)
 
     def up_callback(value: int) -> None:
         pass
