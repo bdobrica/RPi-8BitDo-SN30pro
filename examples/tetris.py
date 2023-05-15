@@ -110,7 +110,7 @@ def main() -> None:
 
     def left_callback(value: int) -> None:
         global brick_dx
-        if value == 1:
+        if value != 0:
             lock = threading.Lock()
             with lock:
                 brick_dx -= 1
@@ -118,7 +118,7 @@ def main() -> None:
 
     def right_callback(value: int) -> None:
         global brick_dx
-        if value == 1:
+        if value != 0:
             lock = threading.Lock()
             with lock:
                 brick_dx += 1
