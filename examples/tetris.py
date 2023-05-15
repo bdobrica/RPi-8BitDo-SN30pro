@@ -23,6 +23,7 @@ PIECES = [
 ]
 
 brick_dx = 0
+speed = 1
 
 
 def generate_piece(x, y) -> list:
@@ -80,6 +81,7 @@ def display() -> None:
 
     get_new_piece = True
     prev_pieces = []
+    frames = 0
     while True:
         if get_new_piece:
             prev_piece = None
@@ -92,9 +94,9 @@ def display() -> None:
             _ = prev_pieces.pop(0)
         print_piece(canvas, piece)
 
-        time.sleep(0.1)
+        time.sleep(0.01)
         prev_pieces.append(piece)
-        piece = move_piece(piece, brick_dx, 1)
+        piece = move_piece(piece, brick_dx, frames // 10)
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
@@ -103,6 +105,9 @@ def display() -> None:
                 brick_dx = 0
         print("")
         canvas = matrix.SwapOnVSync(canvas)
+        frames += 1
+        if frames > 10:
+            frames = 0
 
 
 def main() -> None:
@@ -112,7 +117,7 @@ def main() -> None:
         global brick_dx
         lock = threading.Lock()
         with lock:
-            brick_dx -= 0 if brick_dx == 0 else 1
+            brick_dx = 0 if brick_dx == 0 else -1
 
         print("left", brick_dx)
 
@@ -120,7 +125,7 @@ def main() -> None:
         global brick_dx
         lock = threading.Lock()
         with lock:
-            brick_dx += 0 if brick_dx == 0 else 1
+            brick_dx = 0 if brick_dx == 0 else 1
 
         print("right", brick_dx)
 
