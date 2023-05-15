@@ -8,7 +8,7 @@ sys.path.append("../src")
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix.core import FrameCanvas
 
-from bt_8bitdo_30snpro import Controller
+from bt_8bitdo_30snpro.controller import Controller, StickCallbacks
 
 WIDTH = 32
 HEIGHT = 32
@@ -120,7 +120,7 @@ def main() -> None:
         pass
 
     controller = Controller(
-        dpad_callbacks=Controller.StickCallbacks(
+        dpad_callbacks=StickCallbacks(
             on_left=left_callback,
             on_right=right_callback,
             on_up=up_callback,
