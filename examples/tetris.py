@@ -108,11 +108,13 @@ def main() -> None:
         brick_dx = 0
         if value == 1:
             brick_dx -= 1
+        print("left", brick_dx)
 
     def right_callback(value: int) -> None:
         brick_dx = 0
         if value == 1:
             brick_dx += 1
+        print("right", brick_dx)
 
     def up_callback(value: int) -> None:
         pass
