@@ -1,9 +1,12 @@
 import random
+import sys
 import time
+from threading import Thread
 
-# from bt_8bitdo_30snpro import Controller
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix.core import FrameCanvas
+
+from bt_8bitdo_30snpro import Controller
 
 WIDTH = 32
 HEIGHT = 32
@@ -65,7 +68,9 @@ def init_matrix() -> RGBMatrix:
     return matrix
 
 
-def main() -> None:
+def display() -> None:
+    global brick_dx
+
     matrix = init_matrix()
     canvas = matrix.CreateFrameCanvas()
 
@@ -74,7 +79,7 @@ def main() -> None:
     while True:
         if get_new_piece:
             prev_piece = None
-            piece = generate_piece(0, 0)
+            piece = generate_piece(WIDTH // 2 - 1, 0)
             get_new_piece = False
 
         for prev_piece in prev_pieces:
@@ -85,12 +90,45 @@ def main() -> None:
 
         time.sleep(0.1)
         prev_pieces.append(piece)
-        piece = move_piece(piece, 0, 1)
+        piece = move_piece(piece, brick_dx, 1)
         if detect_collision(piece):
             print("Collision!")
             get_new_piece = True
         print("")
         canvas = matrix.SwapOnVSync(canvas)
+
+
+def main() -> None:
+    brick_dx = 0
+
+    def left_callback(value: int) -> None:
+        brick_dx = 0
+        if value == 1:
+            brick_dx -= 1
+
+    def right_callback(value: int) -> None:
+        brick_dx = 0
+        if value == 1:
+            brick_dx += 1
+
+    def up_callback(value: int) -> None:
+        pass
+
+    def down_callback(value: int) -> None:
+        pass
+
+    controller = Controller(
+        dpad_callbacks=Controller.StickCallbacks(
+            on_left=left_callback,
+            on_right=right_callback,
+            on_up=up_callback,
+            on_down=down_callback,
+        )
+    )
+    Thread(target=display).start()
+    Thread(target=controller.listen).start()
+    while True:
+        time.sleep(1)
 
 
 if __name__ == "__main__":
