@@ -3,6 +3,8 @@ import sys
 import time
 from threading import Thread
 
+sys.path.append("../src")
+
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix.core import FrameCanvas
 
