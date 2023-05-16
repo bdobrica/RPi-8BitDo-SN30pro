@@ -57,7 +57,7 @@ def can_drop(piece: list, board: list) -> bool:
         return False
 
     for x, y in piece:
-        if y == bottom and board[y][x]:
+        if y == bottom and (x < 0 or x >= WIDTH or board[y][x]):
             return False
     return True
 
@@ -70,27 +70,12 @@ def can_slide(piece: list, board: list) -> bool:
         return False
 
     for x, y in piece:
-        if x == left and board[y][x]:
+        if x == left and (y >= HEIGHT or board[y][x]):
             return False
-        if x == right and board[y][x]:
+        if x == right and (y >= HEIGHT or board[y][x]):
             return False
 
     return True
-
-
-def detect_collision(piece: list, board: list = None) -> bool:
-    left = min(x for x, y in piece)
-    right = max(x for x, y in piece)
-    bottom = max(y for x, y in piece)
-
-    if left < 0 or right >= WIDTH or bottom >= HEIGHT:
-        return True
-
-    for x, y in piece:
-        if board and board[y][x]:
-            return True
-
-    return False
 
 
 def init_matrix() -> RGBMatrix:
@@ -118,11 +103,16 @@ def display() -> None:
     matrix = init_matrix()
     canvas = matrix.CreateFrameCanvas()
 
-    get_new_piece = True
-    board = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
-    prev_pieces = []
     frames = 0
+    get_new_piece = True
+    prev_pieces = []
+    board = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
     while True:
+        canvas = matrix.SwapOnVSync(canvas)
+        frames += 1
+        if frames > 10:
+            frames = 0
+
         if get_new_piece:
             prev_pieces = []
             piece = generate_piece(WIDTH // 2 - 1, 0)
@@ -137,8 +127,10 @@ def display() -> None:
         time.sleep(0.01)
         brick_dy = frames // 10
         new_piece = move_piece(piece, brick_dx, brick_dy)
-
+        prev_pieces.append(piece)
         if brick_dy:
+            if not can_slide(new_piece, board):
+                new_piece = move_piece(piece, 0, brick_dy)
             if not can_drop(new_piece, board):
                 print("Locking piece")
                 for x, y in piece:
@@ -150,18 +142,10 @@ def display() -> None:
                     brick_dx = 0
                 prev_pieces = []
             else:
-                prev_pieces.append(piece)
-                if can_slide(new_piece, board):
-                    piece = new_piece
-        else:
-            prev_pieces.append(piece)
-            if can_drop(new_piece, board) and can_slide(new_piece, board):
                 piece = new_piece
-
-        canvas = matrix.SwapOnVSync(canvas)
-        frames += 1
-        if frames > 10:
-            frames = 0
+        else:
+            if can_slide(new_piece, board):
+                piece = new_piece
 
 
 def main() -> None:
