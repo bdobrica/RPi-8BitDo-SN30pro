@@ -146,11 +146,13 @@ def display() -> None:
         print_piece(canvas, piece)
         canvas = matrix.SwapOnVSync(canvas)
 
-        new_piece = rotate_piece(piece, brick_rot)
-        if can_rotate(new_piece, board):
-            prev_pieces.append(piece)
-            piece = new_piece
-            continue
+        if brick_rot:
+            new_piece = rotate_piece(piece, brick_rot)
+            brick_rot = 0
+            if can_rotate(new_piece, board):
+                prev_pieces.append(piece)
+                piece = new_piece
+                continue
 
         frames += 1
         if frames > 10:
