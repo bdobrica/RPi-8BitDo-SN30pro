@@ -51,6 +51,33 @@ def move_piece(piece: list, dx: int, dy: int) -> list:
     return [(x + dx, y + dy) for x, y in piece]
 
 
+def can_drop(piece: list, board: list) -> bool:
+    bottom = max(y for x, y in piece)
+    if bottom >= HEIGHT:
+        return False
+
+    for x, y in piece:
+        if y == bottom and board[y][x]:
+            return False
+    return True
+
+
+def can_slide(piece: list, board: list) -> bool:
+    left = min(x for x, y in piece)
+    right = max(x for x, y in piece)
+
+    if left < 0 or right >= WIDTH:
+        return False
+
+    for x, y in piece:
+        if x == left and board[y][x]:
+            return False
+        if x == right and board[y][x]:
+            return False
+
+    return True
+
+
 def detect_collision(piece: list, board: list = None) -> bool:
     left = min(x for x, y in piece)
     right = max(x for x, y in piece)
@@ -110,8 +137,9 @@ def display() -> None:
         time.sleep(0.01)
         brick_dy = frames // 10
         new_piece = move_piece(piece, brick_dx, brick_dy)
-        if detect_collision(new_piece, board):
-            if brick_dy != 0:
+
+        if brick_dy:
+            if not can_drop(new_piece, board):
                 print("Locking piece")
                 for x, y in piece:
                     board[y][x] = 1
@@ -121,11 +149,11 @@ def display() -> None:
                 with lock:
                     brick_dx = 0
                 prev_pieces = []
-            else:
-                prev_pieces.append(piece)
         else:
-            prev_pieces.append(piece)
-            piece = new_piece
+            prev_piece.append(piece)
+            if can_drop(new_piece, board) and can_slide(new_piece, board):
+                piece = new_piece
+
         canvas = matrix.SwapOnVSync(canvas)
         frames += 1
         if frames > 10:
