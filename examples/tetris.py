@@ -149,6 +149,9 @@ def display() -> None:
                 with lock:
                     brick_dx = 0
                 prev_pieces = []
+            else:
+                prev_pieces.append(piece)
+                piece = new_piece
         else:
             prev_pieces.append(piece)
             if can_drop(new_piece, board) and can_slide(new_piece, board):
