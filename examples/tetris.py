@@ -101,7 +101,6 @@ def display() -> None:
         print_piece(canvas, piece)
 
         time.sleep(0.01)
-        prev_pieces.append(piece)
         brick_dy = frames // 10
         new_piece = move_piece(piece, brick_dx, brick_dy)
         if detect_collision(new_piece):
@@ -113,7 +112,10 @@ def display() -> None:
                 lock = threading.Lock()
                 with lock:
                     brick_dx = 0
+            else:
+                prev_pieces.append(piece)
         else:
+            prev_pieces.append(piece)
             piece = new_piece
         canvas = matrix.SwapOnVSync(canvas)
         frames += 1
