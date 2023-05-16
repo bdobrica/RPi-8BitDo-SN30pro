@@ -151,7 +151,8 @@ def display() -> None:
                 prev_pieces = []
             else:
                 prev_pieces.append(piece)
-                piece = new_piece
+                if can_slide(new_piece, board):
+                    piece = new_piece
         else:
             prev_pieces.append(piece)
             if can_drop(new_piece, board) and can_slide(new_piece, board):
