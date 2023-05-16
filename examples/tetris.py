@@ -78,6 +78,13 @@ def init_matrix() -> RGBMatrix:
     return matrix
 
 
+def print_board(board: list) -> None:
+    print("")
+    for row in board:
+        print("".join(str(x) for x in row))
+    print("")
+
+
 def display() -> None:
     global brick_dx
 
@@ -103,11 +110,12 @@ def display() -> None:
         time.sleep(0.01)
         brick_dy = frames // 10
         new_piece = move_piece(piece, brick_dx, brick_dy)
-        if detect_collision(new_piece):
+        if detect_collision(new_piece, board):
             if brick_dy != 0:
                 print("Locking piece")
                 for x, y in piece:
                     board[x][y] = 1
+                print_board(board)
                 get_new_piece = True
                 lock = threading.Lock()
                 with lock:
