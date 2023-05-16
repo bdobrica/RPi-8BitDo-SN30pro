@@ -8,7 +8,7 @@ sys.path.append("../src")
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from rgbmatrix.core import FrameCanvas
 
-from bt_8bitdo_30snpro.controller import Controller, StickCallbacks
+from bt_8bitdo_30snpro.controller import ButtonCallbacks, Controller, StickCallbacks
 
 WIDTH = 32
 HEIGHT = 32
@@ -23,6 +23,7 @@ PIECES = [
 ]
 
 brick_dx = 0
+brick_rot = 0
 speed = 1
 
 
@@ -51,6 +52,16 @@ def move_piece(piece: list, dx: int, dy: int) -> list:
     return [(x + dx, y + dy) for x, y in piece]
 
 
+def rotate_piece(piece: list, dr: int) -> list:
+    if dr == 0:
+        return [(x, y) for x, y in piece]
+
+    cx = sum(x for x, y in piece) / len(piece)
+    cy = sum(y for x, y in piece) / len(piece)
+
+    return [(int(cx + (y - cy)), int(cy - (x - cx))) for x, y in piece]
+
+
 def can_drop(piece: list, board: list) -> bool:
     bottom = max(y for x, y in piece)
     if bottom >= HEIGHT:
@@ -73,6 +84,21 @@ def can_slide(piece: list, board: list) -> bool:
         if x == left and (y >= HEIGHT or board[y][x]):
             return False
         if x == right and (y >= HEIGHT or board[y][x]):
+            return False
+
+    return True
+
+
+def can_rotate(piece: list, board: list) -> bool:
+    left = min(x for x, y in piece)
+    right = max(x for x, y in piece)
+    bottom = max(y for x, y in piece)
+
+    if left < 0 or right >= WIDTH or bottom >= HEIGHT:
+        return False
+
+    for x, y in piece:
+        if board[y][x]:
             return False
 
     return True
@@ -126,6 +152,9 @@ def display() -> None:
 
         time.sleep(0.01)
         brick_dy = frames // 10
+        new_piece = rotate_piece(piece, brick_rot)
+        if can_rotate(new_piece, board):
+            piece = new_piece
         new_piece = move_piece(piece, brick_dx, brick_dy)
         prev_pieces.append(piece)
         if brick_dy:
@@ -157,15 +186,11 @@ def main() -> None:
         with lock:
             brick_dx = 0 if value == 0 else -1
 
-        print("left", brick_dx)
-
     def right_callback(value: int) -> None:
         global brick_dx
         lock = threading.Lock()
         with lock:
             brick_dx = 0 if value == 0 else 1
-
-        print("right", brick_dx)
 
     def up_callback(value: int) -> None:
         pass
@@ -173,13 +198,22 @@ def main() -> None:
     def down_callback(value: int) -> None:
         pass
 
+    def b_callback(value: int) -> None:
+        global brick_rot
+        lock = threading.Lock()
+        with lock:
+            brick_rot = 0 if value == 0 else 1
+
     controller = Controller(
         dpad_callbacks=StickCallbacks(
             on_left=left_callback,
             on_right=right_callback,
             on_up=up_callback,
             on_down=down_callback,
-        )
+        ),
+        button_callbacks=ButtonCallbacks(
+            on_b=b_callback,
+        ),
     )
     threading.Thread(target=controller.listen).start()
     display()
