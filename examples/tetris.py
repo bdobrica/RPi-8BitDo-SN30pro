@@ -88,6 +88,8 @@ def can_move(piece: list, board: list) -> bool:
         if board[y][x]:
             return False
 
+    return True
+
 
 def can_rotate(piece: list, board: list) -> bool:
     left = min(x for x, y in piece)
