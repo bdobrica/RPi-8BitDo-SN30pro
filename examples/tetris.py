@@ -60,7 +60,7 @@ def detect_collision(piece: list, board: list = None) -> bool:
         return True
 
     for x, y in piece:
-        if board and board[x][y]:
+        if board and board[y][x]:
             return True
 
     return False
@@ -114,7 +114,7 @@ def display() -> None:
             if brick_dy != 0:
                 print("Locking piece")
                 for x, y in piece:
-                    board[x][y] = 1
+                    board[y][x] = 1
                 print_board(board)
                 get_new_piece = True
                 lock = threading.Lock()
