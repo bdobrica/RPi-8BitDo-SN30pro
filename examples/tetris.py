@@ -134,11 +134,6 @@ def display() -> None:
     prev_pieces = []
     board = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
     while True:
-        canvas = matrix.SwapOnVSync(canvas)
-        frames += 1
-        if frames > 10:
-            frames = 0
-
         if get_new_piece:
             prev_pieces = []
             piece = generate_piece(WIDTH // 2 - 1, 0)
@@ -149,12 +144,20 @@ def display() -> None:
         if len(prev_pieces) > 1:
             _ = prev_pieces.pop(0)
         print_piece(canvas, piece)
+        canvas = matrix.SwapOnVSync(canvas)
+
+        new_piece = rotate_piece(piece, brick_rot)
+        if can_rotate(new_piece, board):
+            prev_pieces.append(piece)
+            piece = new_piece
+            continue
+
+        frames += 1
+        if frames > 10:
+            frames = 0
 
         time.sleep(0.01)
         brick_dy = frames // 10
-        new_piece = rotate_piece(piece, brick_rot)
-        if can_rotate(new_piece, board):
-            piece = new_piece
         new_piece = move_piece(piece, brick_dx, brick_dy)
         prev_pieces.append(piece)
         if brick_dy:
