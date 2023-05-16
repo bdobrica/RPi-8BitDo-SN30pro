@@ -38,6 +38,7 @@ speed = 1
 
 
 def generate_piece(x, y) -> list:
+    global brick_color
     piece_idx = random.randint(0, len(PIECES) - 1)
     piece = PIECES[piece_idx]
     brick_color = COLORS[piece_idx]
@@ -49,6 +50,7 @@ def generate_piece(x, y) -> list:
 
 
 def print_piece(canvas: FrameCanvas, piece: list) -> None:
+    global brick_color
     print(f"print: {piece}")
     for x, y in piece:
         canvas.SetPixel(x, y, *brick_color)
