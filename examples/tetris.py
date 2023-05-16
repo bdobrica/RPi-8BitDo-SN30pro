@@ -124,7 +124,7 @@ def display() -> None:
     frames = 0
     while True:
         if get_new_piece:
-            prev_piece = None
+            prev_pieces = []
             piece = generate_piece(WIDTH // 2 - 1, 0)
             get_new_piece = False
 
@@ -150,7 +150,7 @@ def display() -> None:
                     brick_dx = 0
                 prev_pieces = []
         else:
-            prev_piece.append(piece)
+            prev_pieces.append(piece)
             if can_drop(new_piece, board) and can_slide(new_piece, board):
                 piece = new_piece
 
