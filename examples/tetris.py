@@ -21,14 +21,26 @@ PIECES = [
     0b11100010,  # J
     0b11100100,  # T
 ]
+COLORS = [
+    (0, 100, 100),  # line
+    (255, 255, 0),  # square
+    (0, 255, 0),  # S
+    (255, 0, 0),  # Z
+    (255, 165, 0),  # L
+    (0, 0, 255),  # J
+    (221, 160, 221),  # T
+]
 
 brick_dx = 0
 brick_rot = 0
+brick_color = (255, 255, 255)
 speed = 1
 
 
 def generate_piece(x, y) -> list:
-    piece = random.choice(PIECES)
+    piece_idx = random.randint(0, len(PIECES) - 1)
+    piece = PIECES[piece_idx]
+    brick_color = COLORS[piece_idx]
     result = []
     for c in range(8):
         if piece & (1 << c):
@@ -39,7 +51,7 @@ def generate_piece(x, y) -> list:
 def print_piece(canvas: FrameCanvas, piece: list) -> None:
     print(f"print: {piece}")
     for x, y in piece:
-        canvas.SetPixel(x, y, 255, 255, 255)
+        canvas.SetPixel(x, y, *brick_color)
 
 
 def clear_piece(canvas: FrameCanvas, piece: list) -> None:
