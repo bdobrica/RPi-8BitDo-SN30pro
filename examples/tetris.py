@@ -176,7 +176,7 @@ def display() -> None:
                 get_new_piece = True
                 prev_pieces = []
                 continue
-        if not new_piece:
+        if new_piece:
             piece = new_piece
         prev_pieces.append(piece)
 
