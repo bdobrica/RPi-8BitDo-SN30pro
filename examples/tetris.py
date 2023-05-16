@@ -125,6 +125,7 @@ def print_board(board: list) -> None:
 
 def display() -> None:
     global brick_dx
+    global brick_rot
 
     matrix = init_matrix()
     canvas = matrix.CreateFrameCanvas()
