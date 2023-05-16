@@ -112,6 +112,7 @@ def display() -> None:
                 lock = threading.Lock()
                 with lock:
                     brick_dx = 0
+                prev_pieces = []
             else:
                 prev_pieces.append(piece)
         else:
