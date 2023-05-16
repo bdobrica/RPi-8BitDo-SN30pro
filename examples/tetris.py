@@ -76,31 +76,17 @@ def rotate_piece(piece: list, dr: int) -> list:
     return [(int(cx + (y - cy)), int(cy - (x - cx))) for x, y in piece]
 
 
-def can_drop(piece: list, board: list) -> bool:
-    bottom = max(y for x, y in piece)
-    if bottom >= HEIGHT:
-        return False
-
-    for x, y in piece:
-        if y == bottom and (x < 0 or x >= WIDTH or board[y][x]):
-            return False
-    return True
-
-
-def can_slide(piece: list, board: list) -> bool:
+def can_move(piece: list, board: list) -> bool:
     left = min(x for x, y in piece)
     right = max(x for x, y in piece)
+    bottom = max(y for x, y in piece)
 
-    if left < 0 or right >= WIDTH:
+    if left < 0 or right >= WIDTH or bottom >= HEIGHT:
         return False
 
     for x, y in piece:
-        if x == left and (y >= HEIGHT or board[y][x]):
+        if board[y][x]:
             return False
-        if x == right and (y >= HEIGHT or board[y][x]):
-            return False
-
-    return True
 
 
 def can_rotate(piece: list, board: list) -> bool:
@@ -172,29 +158,27 @@ def display() -> None:
         frames += 1
         if frames > 10:
             frames = 0
+        brick_dy = frames // 10
 
         time.sleep(0.01)
-        brick_dy = frames // 10
-        new_piece = move_piece(piece, brick_dx, brick_dy)
-        prev_pieces.append(piece)
-        if brick_dy:
-            if not can_slide(new_piece, board):
-                new_piece = move_piece(piece, 0, brick_dy)
-            if not can_drop(new_piece, board):
-                print("Locking piece")
-                for x, y in piece:
-                    board[y][x] = 1
-                print_board(board)
-                get_new_piece = True
+        new_piece = None
+        if brick_dx:
+            new_piece = move_piece(piece, brick_dx, 0)
+            if not can_move(new_piece, board):
                 lock = threading.Lock()
                 with lock:
                     brick_dx = 0
+        if brick_dy:
+            new_piece = move_piece(piece, brick_dx, brick_dy)
+            if not can_move(new_piece, board):
+                for x, y in piece:
+                    board[y][x] = 1
+                get_new_piece = True
                 prev_pieces = []
-            else:
-                piece = new_piece
-        else:
-            if can_slide(new_piece, board):
-                piece = new_piece
+                continue
+        if not new_piece:
+            piece = new_piece
+        prev_pieces.append(piece)
 
 
 def main() -> None:
