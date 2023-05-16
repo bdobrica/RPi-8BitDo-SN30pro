@@ -58,6 +58,11 @@ def detect_collision(piece: list, board: list = None) -> bool:
 
     if left < 0 or right >= WIDTH or bottom >= HEIGHT:
         return True
+
+    for x, y in piece:
+        if board and board[x][y]:
+            return True
+
     return False
 
 
@@ -80,6 +85,7 @@ def display() -> None:
     canvas = matrix.CreateFrameCanvas()
 
     get_new_piece = True
+    board = [[0 for _ in range(WIDTH)] for _ in range(HEIGHT)]
     prev_pieces = []
     frames = 0
     while True:
@@ -96,14 +102,19 @@ def display() -> None:
 
         time.sleep(0.01)
         prev_pieces.append(piece)
-        piece = move_piece(piece, brick_dx, frames // 10)
-        if detect_collision(piece):
-            print("Collision!")
-            get_new_piece = True
-            lock = threading.Lock()
-            with lock:
-                brick_dx = 0
-        print("")
+        brick_dy = frames // 10
+        new_piece = move_piece(piece, brick_dx, brick_dy)
+        if detect_collision(new_piece):
+            if brick_dy != 0:
+                print("Locking piece")
+                for x, y in piece:
+                    board[x][y] = 1
+                get_new_piece = True
+                lock = threading.Lock()
+                with lock:
+                    brick_dx = 0
+        else:
+            piece = new_piece
         canvas = matrix.SwapOnVSync(canvas)
         frames += 1
         if frames > 10:
