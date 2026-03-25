@@ -20,13 +20,19 @@ import time
 from tetris_led.game import Action, TetrisGame
 
 
-def _make_renderer(use_terminal: bool):
-    if use_terminal:
+def _make_renderer(args):
+    if args.terminal:
         from tetris_led.renderer import TerminalRenderer
         return TerminalRenderer()
     else:
         from tetris_led.renderer import LedMatrixRenderer
-        return LedMatrixRenderer()
+        return LedMatrixRenderer(
+            rows=args.led_rows,
+            cols=args.led_cols,
+            brightness=args.brightness,
+            gpio_slowdown=args.gpio_slowdown,
+            hardware_mapping=args.hardware_mapping,
+        )
 
 
 def _run_play(args):
@@ -38,7 +44,7 @@ def _run_play(args):
     )
 
     game = TetrisGame(width=args.width, height=args.height)
-    renderer = _make_renderer(args.terminal)
+    renderer = _make_renderer(args)
     lock = threading.Lock()
     running = True
 
@@ -98,7 +104,7 @@ def _run_demo(args):
     """Demo mode: AI plays Tetris automatically in a loop."""
     from tetris_led.demo_ai import compute_best_actions
 
-    renderer = _make_renderer(args.terminal)
+    renderer = _make_renderer(args)
     running = True
 
     def _on_signal(sig, frame):
@@ -137,6 +143,22 @@ def _run_demo(args):
         renderer.cleanup()
 
 
+def _add_led_args(parser):
+    """Add LED matrix hardware options to a subparser."""
+    led = parser.add_argument_group("LED matrix options")
+    led.add_argument("--led-rows", type=int, default=32, help="LED panel rows (default: 32)")
+    led.add_argument("--led-cols", type=int, default=32, help="LED panel columns (default: 32)")
+    led.add_argument("--brightness", type=int, default=80, help="Brightness 1-100 (default: 80)")
+    led.add_argument(
+        "--gpio-slowdown", type=int, default=4,
+        help="GPIO slowdown factor, increase for Pi 3/4/5 (default: 4)"
+    )
+    led.add_argument(
+        "--hardware-mapping", default="adafruit-hat",
+        help="Hardware mapping: regular, adafruit-hat, adafruit-hat-pwm (default: adafruit-hat)"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Tetris on Raspberry Pi RGB LED matrix"
@@ -153,6 +175,7 @@ def main():
     )
     play_parser.add_argument("--width", type=int, default=10)
     play_parser.add_argument("--height", type=int, default=20)
+    _add_led_args(play_parser)
 
     # Demo sub-command
     demo_parser = subparsers.add_parser("demo", help="Auto-play demo (screensaver)")
@@ -161,6 +184,7 @@ def main():
     )
     demo_parser.add_argument("--width", type=int, default=10)
     demo_parser.add_argument("--height", type=int, default=20)
+    _add_led_args(demo_parser)
 
     args = parser.parse_args()
 

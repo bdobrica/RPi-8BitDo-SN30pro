@@ -20,7 +20,11 @@ Tetris on a Raspberry Pi RGB LED matrix, controlled by an **8BitDo SN30 Pro** Bl
 ### 1. Install the RGB LED matrix driver
 
 ```bash
-pip install git+https://github.com/hzeller/rpi-rgb-led-matrix
+git clone https://github.com/hzeller/rpi-rgb-led-matrix.git
+cd rpi-rgb-led-matrix
+make build-python PYTHON=$(which python3)
+sudo make install-python PYTHON=$(which python3)
+cd ..
 ```
 
 ### 2. Install this project
@@ -66,6 +70,17 @@ tetris-led demo --terminal
 | `--device` | Joystick device path (play mode only) | `/dev/input/js0` |
 | `--width` | Board width in cells | 10 |
 | `--height` | Board height in cells | 20 |
+| `--led-rows` | LED panel rows | 32 |
+| `--led-cols` | LED panel columns | 32 |
+| `--brightness` | LED brightness (1-100) | 80 |
+| `--gpio-slowdown` | GPIO slowdown factor (increase for Pi 3/4/5) | 4 |
+| `--hardware-mapping` | `regular`, `adafruit-hat`, or `adafruit-hat-pwm` | `adafruit-hat` |
+
+### Troubleshooting
+
+- **No output on LED matrix** — Try increasing `--gpio-slowdown` (e.g. `5` or `6` on Pi 4/5). If using an Adafruit HAT, pass `--hardware-mapping adafruit-hat`.
+- **Flickering** — Disable on-board audio: add `dtparam=audio=off` to `/boot/config.txt` and reboot.
+- **Permission denied** — The LED matrix requires root; run with `sudo`.
 
 ## Controls (Play Mode)
 

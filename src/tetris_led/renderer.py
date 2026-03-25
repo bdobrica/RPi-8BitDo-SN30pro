@@ -24,7 +24,14 @@ class Renderer(ABC):
 class LedMatrixRenderer(Renderer):
     """Renders onto an RGB LED matrix via rgbmatrix library."""
 
-    def __init__(self, rows: int = 32, cols: int = 32, brightness: int = 50):
+    def __init__(
+        self,
+        rows: int = 32,
+        cols: int = 32,
+        brightness: int = 80,
+        gpio_slowdown: int = 4,
+        hardware_mapping: str = "adafruit-hat",
+    ):
         from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
         options = RGBMatrixOptions()
@@ -33,6 +40,9 @@ class LedMatrixRenderer(Renderer):
         options.chain_length = 1
         options.parallel = 1
         options.brightness = brightness
+        options.gpio_slowdown = gpio_slowdown
+        options.hardware_mapping = hardware_mapping
+        options.drop_privileges = False  # already running as root
 
         self._matrix = RGBMatrix(options=options)
         self._canvas = self._matrix.CreateFrameCanvas()
