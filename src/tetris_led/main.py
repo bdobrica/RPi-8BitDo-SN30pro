@@ -126,14 +126,14 @@ def _run_demo(args):
                         break
                     game.action(act)
                     renderer.draw(game)
-                    time.sleep(0.04)  # animate each move step
+                    time.sleep(0.12)  # animate each move step
 
                 # If no hard drop in actions, tick gravity
                 if actions and actions[-1] != Action.DROP:
                     game.tick()
                     renderer.draw(game)
 
-                time.sleep(0.12)  # pause between pieces for visual appeal
+                time.sleep(0.4)  # pause between pieces for visual appeal
 
             # Game over — brief pause, then restart
             if running:
