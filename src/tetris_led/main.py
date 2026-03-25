@@ -87,6 +87,16 @@ def _run_play(args):
         if value:
             running = False
 
+    def _flush_queue():
+        """Drain all pending actions and clear DAS state (called on piece lock)."""
+        while not action_queue.empty():
+            try:
+                action_queue.get_nowait()
+            except queue.Empty:
+                break
+        with held_lock:
+            held_actions.clear()
+
     def _process_one_action():
         """Process a single queued action and return whether something changed."""
         try:
@@ -99,7 +109,11 @@ def _run_play(args):
                     game.__init__(width=args.width, height=args.height)
                     return True
             elif not game.game_over:
+                old_piece = game.current_piece
                 game.action(act)
+                # Piece locked (hard drop or landed) — flush stale inputs
+                if game.current_piece is not old_piece:
+                    _flush_queue()
                 return True
         return False
 
@@ -148,8 +162,11 @@ def _run_play(args):
             if now - last_gravity >= game.gravity_interval:
                 with lock:
                     if not game.game_over:
+                        old_piece = game.current_piece
                         game.tick()
                         changed = True
+                        if game.current_piece is not old_piece:
+                            _flush_queue()
                 last_gravity = now
 
             # Render when something changed
