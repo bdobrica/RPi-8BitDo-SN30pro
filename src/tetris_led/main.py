@@ -69,7 +69,7 @@ def _run_play(args):
             running = False
 
     controller = Controller(
-        device=args.device,
+        device=args.device or None,
         dpad_callbacks=StickCallbacks(
             on_left=_action(Action.LEFT),
             on_right=_action(Action.RIGHT),
@@ -168,7 +168,7 @@ def main():
     # Play sub-command
     play_parser = subparsers.add_parser("play", help="Play with a Bluetooth controller")
     play_parser.add_argument(
-        "--device", default="/dev/input/js0", help="Joystick device path"
+        "--device", default="", help="Input device path (auto-detected if not set)"
     )
     play_parser.add_argument(
         "--terminal", action="store_true", help="Use terminal renderer"
