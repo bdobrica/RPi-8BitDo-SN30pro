@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rpi-8bitdo-sn30pro"
+version = "1.0.0"
+description = "Tetris on Raspberry Pi RGB LED matrix with 8BitDo SN30 Pro Bluetooth controller"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+dependencies = []
+
+[project.optional-dependencies]
+rpi = [
+    "rgbmatrix",
+]
+
+[project.scripts]
+tetris-led = "tetris_led.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

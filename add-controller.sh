@@ -26,15 +26,15 @@ while true; do
         echo "Press enter when you're ready to start pairing."
         read -p ""
 
-        controller_mac="$( sudo bluetoothctl --timeout=5 scan on | grep "Pro Controller" | awk '{print $3}' | head -n 1 )"
+        controller_mac="$( bluetoothctl --timeout=5 scan on | grep "Pro Controller" | awk '{print $3}' | head -n 1 )"
         if [ -z "$controller_mac" ]; then
             echo "No controller found"
             exit 1
         fi
         echo "Connecting to $controller_mac ..."
-        sudo bluetoothctl pair "$controller_mac"
-        sudo bluetoothctl trust "$controller_mac"
-        sudo bluetoothctl connect "$controller_mac"
+        bluetoothctl pair "$controller_mac"
+        bluetoothctl trust "$controller_mac"
+        bluetoothctl connect "$controller_mac"
         break
     fi
 
@@ -43,13 +43,13 @@ while true; do
         echo "Make sure your controller is on."
         echo "Press enter when you're ready to start connecting."
         read -p ""
-        controller_mac="$( sudo bluetoothctl devices | grep "Pro Controller" | awk '{print $2}' | head -n 1 )"
+        controller_mac="$( bluetoothctl devices | grep "Pro Controller" | awk '{print $2}' | head -n 1 )"
         if [ -z "$controller_mac" ]; then
             echo "No controller found"
             exit 1
         fi
         echo "Connecting to $controller_mac ..."
-        sudo bluetoothctl connect "$controller_mac"
+        bluetoothctl connect "$controller_mac"
         break
     fi
 
