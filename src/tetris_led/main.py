@@ -12,6 +12,7 @@ Flags:
 """
 
 import argparse
+import queue
 import signal
 import sys
 import threading
@@ -46,27 +47,45 @@ def _run_play(args):
     game = TetrisGame(width=args.width, height=args.height)
     renderer = _make_renderer(args)
     lock = threading.Lock()
+    action_queue = queue.Queue()
     running = True
+    render_needed = threading.Event()
+    render_needed.set()
 
     def _action(act: Action):
         def callback(value: int):
             if value == 0:
                 return
-            with lock:
-                game.action(act)
+            action_queue.put(act)
         return callback
 
     def _start_callback(value: int):
         nonlocal running
         if value:
-            with lock:
-                if game.game_over:
-                    game.__init__(width=args.width, height=args.height)
+            action_queue.put("restart")
 
     def _select_callback(value: int):
         nonlocal running
         if value:
             running = False
+
+    def _process_actions():
+        """Drain the action queue and apply all pending actions."""
+        changed = False
+        while not action_queue.empty():
+            try:
+                act = action_queue.get_nowait()
+            except queue.Empty:
+                break
+            with lock:
+                if act == "restart":
+                    if game.game_over:
+                        game.__init__(width=args.width, height=args.height)
+                        changed = True
+                elif not game.game_over:
+                    game.action(act)
+                    changed = True
+        return changed
 
     controller = Controller(
         device=args.device or None,
@@ -88,13 +107,30 @@ def _run_play(args):
     controller_thread = threading.Thread(target=controller.listen, daemon=True)
     controller_thread.start()
 
+    RENDER_INTERVAL = 0.016  # ~60 FPS render loop
+
     try:
+        last_gravity = time.monotonic()
         while running:
-            with lock:
-                if not game.game_over:
-                    game.tick()
-                renderer.draw(game)
-            time.sleep(game.gravity_interval)
+            # Process any queued actions immediately
+            changed = _process_actions()
+
+            # Apply gravity on schedule
+            now = time.monotonic()
+            if now - last_gravity >= game.gravity_interval:
+                with lock:
+                    if not game.game_over:
+                        game.tick()
+                        changed = True
+                last_gravity = now
+
+            # Render when something changed
+            if changed:
+                with lock:
+                    renderer.draw(game)
+
+            # Short sleep to stay responsive without busy-spinning
+            time.sleep(RENDER_INTERVAL)
     finally:
         controller.stop()
         renderer.cleanup()
